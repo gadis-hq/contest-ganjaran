@@ -1,0 +1,9 @@
+
+body{font-family:Arial;background:#fff0f5;text-align:center;}
+.card{background:white;padding:30px;margin:50px auto;width:300px;
+box-shadow:0 0 20px rgba(0,0,0,0.1);border-radius:12px;}
+input{display:block;margin:10px auto;padding:10px;width:90%;}
+button{padding:10px 15px;margin:5px;}
+.live{background:black;color:gold;}
+#winnerDisplay{font-size:40px;margin-top:100px;animation:fade 2s infinite alternate;}
+@keyframes fade{from{opacity:0.3;}to{opacity:1;}}
