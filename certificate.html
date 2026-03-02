@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sijil Pemenang</title>
+<style>
+body{background:#fff0f5;text-align:center;padding:60px;font-family:serif;}
+.card{border:8px solid #d4af37;padding:50px;background:white;}
+h1{color:#d4af37;}
+.name{font-size:28px;color:#c71585;margin:20px;}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>SIJIL RASMI PENEBUS GANJARAN</h1>
+<p>Dengan ini disahkan bahawa</p>
+<div class="name" id="winnerName"></div>
+<p>layak untuk tebus ganjaran RM50,000</p>
+</div>
+
+<script>
+const params=new URLSearchParams(window.location.search);
+document.getElementById("winnerName").innerText=params.get("name");
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Semakan Kod</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="card">
+<h2>Semakan Kod Siri</h2>
+<input type="text" id="serialInput" placeholder="Masukkan Kod">
+<button onclick="verifyCode()">Semak</button>
+<div id="result"></div>
+</div>
+<p id="checkingStatus" class="hidden"><span class="spinner">⏳</span> <em>Sedang menyemak kod...</em></p>
+</div>
+
+<script type="module" src="js/verify.js"></script>
+</body>
+</html>
