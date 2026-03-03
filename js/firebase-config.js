@@ -4,9 +4,13 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyDAGrKodo7O4GlfUCz4v09SinVd_Y6HECM",
+  authDomain: "gadisqs-hq.firebaseapp.com",
+  projectId: "gadisqs-hq",
+  storageBucket: "gadisqs-hq.firebasestorage.app",
+  messagingSenderId: "273308299702",
+  appId: "1:273308299702:web:2a74b41c7701f285f6d117",
+  measurementId: "G-6TT7H81TH5"
 };
 
 const app = initializeApp(firebaseConfig);
