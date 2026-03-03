@@ -18,7 +18,23 @@ h1{color:#d4af37;}
 <div class="name" id="winnerName"></div>
 <p>layak untuk tebus ganjaran RM50,000</p>
 </div>
+<button onclick="generatePDF()">Download PDF</button>
 
+<script>
+function generatePDF(){
+  const name = document.getElementById("winnerName").innerText;
+  const canvas = document.createElement("canvas");
+
+  QRCode.toCanvas(canvas, window.location.href, function(){
+    const win = window.open('');
+    win.document.write(document.body.innerHTML);
+    win.document.body.appendChild(canvas);
+    win.print();
+  });
+}
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  
 <script>
 const params=new URLSearchParams(window.location.search);
 document.getElementById("winnerName").innerText=params.get("name");
