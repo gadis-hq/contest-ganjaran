@@ -1,159 +1,277 @@
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
-  <title>Semakan Kod Siri Gadis QS</title>
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semakan Rasmi Kod Siri | Gadis QS HQ</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d4af37">  
+  
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#fff0f5,#ffe4ec);
+  text-align:center;
+  padding:30px;
 }
 
-.result-box {
-  position: relative;
-  padding: 25px;
-  margin-top: 20px;
-  border-radius: 12px;
-  color: #333;
-  overflow: hidden;
+.logo{
+  width:140px;
+  margin-bottom:20px;
 }
 
-.box-success {
-  background: #e8f9f0;
-  border: 2px solid #28a745;
+.card{
+  max-width:600px;
+  margin:auto;
+  background:#fff;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.08);
+  position:relative;
+  overflow:hidden;
+  animation:fadeIn 0.8s ease;
 }
 
-.box-active {
-  background: #fff8e6;
-  border: 2px solid #ffc107;
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(15px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
-.box-error {
-  background: #fdeaea;
-  border: 2px solid #dc3545;
+.watermark{
+  position:absolute;
+  bottom:10px;
+  right:15px;
+  opacity:0.06;
+  font-size:14px;
+  font-weight:700;
 }
 
-.watermark {
-  position: absolute;
-  top: 40%;
-  left: 10%;
-  font-size: 40px;
-  color: rgba(0,0,0,0.05);
-  transform: rotate(-20deg);
-  pointer-events: none;
-  font-weight: bold;
+input{
+  padding:12px;
+  width:80%;
+  border-radius:8px;
+  border:1px solid #ccc;
+  margin-bottom:10px;
 }
 
-.qr-badge {
-  margin-top: 15px;
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:8px;
+  background:#d4af37;
+  color:#fff;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.statusBox{
+  margin-top:20px;
+  padding:20px;
+  border-radius:12px;
+  font-weight:600;
+}
+
+.green{background:#e6fff0;border:2px solid #00aa55;}
+.yellow{background:#fffbe6;border:2px solid #e6b800;}
+.red{background:#ffe6e6;border:2px solid #cc0000;}
+
+.badge{
+  margin-top:10px;
+  font-size:13px;
 }
 </style>
+</head>
 <body>
 
-  <h2>Semakan Rasmi Kod Siri</h2>
+<img src="LOGO_URL_DISINI.png" class="logo">
+
+<div class="card">
+
+<h2>Semakan Rasmi Kod Siri</h2>
+
 <input type="text" id="kodInput" placeholder="Masukkan Kod Siri">
-<button onclick="checkKod()">Semak</button>
+<br>
+<button onclick="checkKod()">Semak Sekarang</button>
+
 <div id="result"></div>
+<div id="map" style="height:300px;margin-top:20px;border-radius:12px;display:none;"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<div class="watermark">Sistem Rasmi Gadis QS</div>
+</div>
+
+<script type="module">
   
-<script>
-const SHEET_ID = "2PACX-1vT-A0gknoeLsL-Sdrcqt1rYXp-LrnPDYZ6NpUcxq-1x6aA4vRXdTrNwD6NZT3wtSEo3Qtemz5fk_5w8";
-const sheetKodSiri = "KOD_SIRI";
-const sheetPenebusan = "DATA_PENEBUSAN";
-
-async function checkKod() {
-  const kodInput = document.getElementById("kodInput").value.trim();
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js');
+}
   
-  const url1 = `https://opensheet.elk.sh/${SHEET_ID}/${sheetKodSiri}`;
-  const url2 = `https://opensheet.elk.sh/${SHEET_ID}/${sheetPenebusan}`;
+  let map;
 
-  const [res1, res2] = await Promise.all([
-    fetch(url1).then(r => r.json()),
-    fetch(url2).then(r => r.json())
-  ]);
+function showMap(lat,lng,bandar){
 
-  const kodData = res1.find(row => row["KOD SIRI"] === kodInput);
+  document.getElementById("map").style.display = "block";
 
-  // ❌ TIDAK WUJUD
-  if (!kodData) {
-    return showStyledResult("error", `
-  <h3>❌ KOD TIDAK WUJUD</h3>
-  <p>Kod siri tiada dalam rekod rasmi sistem.</p>
-`, "");
+  if(!map){
+    map = L.map('map').setView([lat,lng], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Gadis QS HQ'
+    }).addTo(map);
   }
 
-  // 🟡 AKTIF / BELUM DITEBUS
-  if (kodData["STATUS KOD"] === "AKTIF / BELUM DITEBUS") {
-    return showStyledResult("active", `
-  <h3>STATUS KOD AKTIF</h3>
-  <p><strong>KOD SIRI:</strong> ${kodData["KOD SIRI"]}</p>
-  <p><strong>HADIAH:</strong> ${kodData["HADIAH"]}</p>
-  <p><strong>STATUS KOD:</strong> ${kodData["STATUS KOD"]}</p>
-  <p><strong>PEMBELIAN PRODUK:</strong> ${kodData["PEMBELIAN PRODUK"]}</p>
-  <p><strong>HARGA:</strong> ${kodData["HARGA"]}</p>
-  <p><strong>STATUS PENEBUSAN:</strong> BELUM DITEBUS</p>
-  <p><strong>DISAHKAN OLEH:</strong> GADIS QS HQ</p>
-`, kodInput);
+  L.marker([lat,lng]).addTo(map)
+    .bindPopup("Pemenang dari " + bandar)
+    .openPopup();
+}
+  
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc, addDoc, collection, increment, updateDoc } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "XXXX",
+  authDomain: "XXXX",
+  projectId: "XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let attempt = 0;
+
+function maskIC(ic){
+  if(!ic) return "-";
+  return ic.slice(0,8)+"XXXX";
+}
+
+window.checkKod = async function(){
+
+  const kod = document.getElementById("kodInput").value.trim().toUpperCase();
+  const result = document.getElementById("result");
+
+  if(!kod) return;
+
+  attempt++;
+  if(attempt > 5){
+    result.innerHTML = `<div class="statusBox red">
+    ⚠ Terlalu banyak percubaan. Cuba lagi sebentar.
+    </div>`;
+    return;
   }
 
-  // 🟢 SAH / TELAH DITEBUS
-  if (kodData["STATUS KOD"] === "SAH / TELAH DITEBUS") {
-    logAudit(kodInput, "SAH");
-    }
-    const penebusanData = res2.find(row => row["KOD SIRI"] === kodInput);
+  const docRef = doc(db,"codes",kod);
+  const snap = await getDoc(docRef);
 
-    if (!penebusanData) {
-      return showResult("Data penebusan tidak ditemui.");
-    }
-
-    return showStyledResult("success", `
-  <h3>MAKLUMAT PENEBUSAN RASMI</h3>
-  <p><strong>KOD SIRI:</strong> ${kodData["KOD SIRI"]}</p>
-  <p><strong>NAMA PENUH:</strong> ${kodData["NAMA PENUH"]}</p>
-  <p><strong>NO. IC:</strong> ${penebusanData["NO. IC"]}</p>
-  <p><strong>NO. TELEFON:</strong> ${penebusanData["NO. TELEFON"]}</p>
-  <p><strong>HADIAH:</strong> ${kodData["HADIAH"]}</p>
-  <p><strong>STATUS KOD:</strong> ${kodData["STATUS KOD"]}</p>
-  <p><strong>PEMBELIAN PRODUK:</strong> ${kodData["PEMBELIAN PRODUK"]}</p>
-  <p><strong>HARGA:</strong> ${kodData["HARGA"]}</p>
-  <p><strong>STATUS PENEBUSAN:</strong> ${penebusanData["STATUS PENEBUSAN"]}</p>
-  <p><strong>DISAHKAN OLEH:</strong> ${penebusanData["DISAHKAN OLEH"]}</p>
-  <p><strong>TARIKH:</strong> ${penebusanData["TARIKH"]}</p>
-  <p><strong>BANDAR / NEGERI:</strong> ${penebusanData["BANDAR / NEGERI"]}</p>
-`, kodInput);
+  if(!snap.exists()){
+    result.innerHTML = `
+    <div class="statusBox red">
+    ❌ STATUS KOD: TIDAK WUJUD
+    </div>`;
+    logAudit(kod,"TIDAK_WUJUD");
+    return;
   }
 
-  // Fallback
-  showResult("Status kod tidak dikenalpasti.");
+  const data = snap.data();
+
+  if(data.status === "SAH"){
+  if(data.lat && data.lng){
+   showMap(data.lat, data.lng, data.bandar);
+  }
+    result.innerHTML = `
+    <div class="statusBox green">
+    🟢 KOD SIRI: ${kod}<br>
+    HADIAH: ${data.hadiah}<br>
+    STATUS KOD: SAH / TELAH DITEBUS<br>
+    PEMENANG: ${data.nama}<br>
+    NO IC: ${maskIC(data.ic)}<br>
+    DISAHKAN OLEH: GADIS QS HQ
+    <br><br>
+    <button onclick="downloadSijil('${kod}')">Muat Turun Sijil PDF</button>
+    <div class="badge">✔ QR Verification Active</div>
+    </div>`;
+    logAudit(kod,"SAH");
+    updateStat("sah");
+  }
+
+  else if(data.status === "AKTIF"){
+    result.innerHTML = `
+    <div class="statusBox yellow">
+    🟡 KOD SIRI: ${kod}<br>
+    HADIAH: ${data.hadiah}<br>
+    STATUS KOD: AKTIF / BELUM DITEBUS<br>
+    PEMBELIAN PRODUK: PACKAGE COMBO PRODUK QS<br>
+    HARGA: RM500<br>
+    STATUS PENEBUSAN: BELUM DITEBUS<br>
+    DISAHKAN OLEH: GADIS QS HQ
+    </div>`;
+    logAudit(kod,"AKTIF");
+    updateStat("aktif");
+  }
+};
+  
+async function logAudit(kod,status){
+  await addDoc(collection(db,"audit_logs"),{
+    kod:kod,
+    status:status,
+    timestamp:new Date(),
+    device:navigator.userAgent
+  });
+}
+
+async function updateStat(type){
+  const statRef = doc(db,"system","stats");
+  if(type==="sah"){
+    await updateDoc(statRef,{sah:increment(1)});
+  }
+  if(type==="aktif"){
+    await updateDoc(statRef,{aktif:increment(1)});
+  }
+}
+
+window.downloadSijil = function(kod){
+  window.open("https://verify.gadisqs.com/sijil/"+kod+".pdf");
+};
+
+// AUTO VERIFY DARI QR
+const urlParams = new URLSearchParams(window.location.search);
+const autoKod = urlParams.get('kod');
+if(autoKod){
+  document.getElementById("kodInput").value = autoKod;
+  checkKod();
 }
 
 <script>
-function showStyledResult(type, content, kod) {
+let deferredPrompt;
 
-  let boxClass = "";
-  if (type === "success") boxClass = "box-success";
-  if (type === "active") boxClass = "box-active";
-  if (type === "error") boxClass = "box-error";
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
 
-  document.getElementById("result").innerHTML = `
-    <div class="result-box ${boxClass}">
-      <div class="watermark">Sistem Rasmi Gadis QS</div>
-      ${content}
-      <div class="qr-badge" id="qrcode"></div>
-    </div>
-  `;
+  const installBtn = document.createElement("button");
+  installBtn.innerText = "📱 Pasang Aplikasi Gadis QS";
+  installBtn.style.marginTop="20px";
+  installBtn.style.background="#00aa55";
+  installBtn.style.color="#fff";
+  installBtn.style.padding="12px";
+  installBtn.style.borderRadius="8px";
+  installBtn.style.border="none";
 
-  if (type !== "error") {
-    new QRCode(document.getElementById("qrcode"), {
-      text: window.location.href + "?kod=" + kod,
-      width: 100,
-      height: 100
+  document.querySelector(".card").appendChild(installBtn);
+
+  installBtn.addEventListener("click", ()=>{
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(()=>{
+      deferredPrompt = null;
+      installBtn.remove();
     });
-  }
-}
-
+  });
+});  
+  
 </script>
-
 </body>
 </html>
