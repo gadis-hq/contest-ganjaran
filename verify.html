@@ -99,7 +99,8 @@ async function checkKod() {
 
   // 🟢 SAH / TELAH DITEBUS
   if (kodData["STATUS KOD"] === "SAH / TELAH DITEBUS") {
-
+    logAudit(kodInput, "SAH");
+    }
     const penebusanData = res2.find(row => row["KOD SIRI"] === kodInput);
 
     if (!penebusanData) {
