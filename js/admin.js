@@ -29,3 +29,35 @@ window.drawWinner = async function(){
  await setDoc(doc(db,"winners","latest"),winner);
  alert("Pemenang dipilih!");
 }
+
+import { onSnapshot, collection } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const ctx = document.getElementById('statsChart').getContext('2d');
+let chart;
+
+function initChart(count){
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [new Date().toLocaleTimeString()],
+      datasets: [{
+        label: 'Jumlah Tebusan',
+        data: [count],
+        borderColor: '#d4af37',
+        tension: 0.4
+      }]
+    }
+  });
+}
+
+onSnapshot(collection(db,"redemptions"), (snapshot)=>{
+  const count = snapshot.size;
+  if(!chart){
+    initChart(count);
+  } else {
+    chart.data.labels.push(new Date().toLocaleTimeString());
+    chart.data.datasets[0].data.push(count);
+    chart.update();
+  }
+});
