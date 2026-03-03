@@ -8,5 +8,6 @@ const display=document.getElementById("winnerDisplay");
 onSnapshot(doc(db,"winners","latest"),(docSnap)=>{
  if(docSnap.exists()){
    display.innerText="TAHNIAH! "+(docSnap.data().serial || "");
+  celebrateWinner();
  }
 });
