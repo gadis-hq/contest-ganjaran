@@ -12,5 +12,23 @@
 <div id="winnerDisplay">Menunggu Pengumuman...</div>
 
 <script type="module" src="js/live.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<audio id="drumroll" src="assets/drumroll.mp3"></audio>
+
+<script>
+function celebrateWinner(){
+  const audio = document.getElementById("drumroll");
+  audio.play();
+
+  setTimeout(()=>{
+    confetti({
+      particleCount: 200,
+      spread: 120,
+      origin: { y: 0.6 }
+    });
+  }, 2500);
+}
+</script>
+  
 </body>
 </html>
