@@ -1,3 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Semakan Kod Siri Gadis QS</title>
+</head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+}
+
+.result-box {
+  position: relative;
+  padding: 25px;
+  margin-top: 20px;
+  border-radius: 12px;
+  color: #333;
+  overflow: hidden;
+}
+
+.box-success {
+  background: #e8f9f0;
+  border: 2px solid #28a745;
+}
+
+.box-active {
+  background: #fff8e6;
+  border: 2px solid #ffc107;
+}
+
+.box-error {
+  background: #fdeaea;
+  border: 2px solid #dc3545;
+}
+
+.watermark {
+  position: absolute;
+  top: 40%;
+  left: 10%;
+  font-size: 40px;
+  color: rgba(0,0,0,0.05);
+  transform: rotate(-20deg);
+  pointer-events: none;
+  font-weight: bold;
+}
+
+.qr-badge {
+  margin-top: 15px;
+}
+</style>
+<body>
+
+  <h2>Semakan Rasmi Kod Siri</h2>
+<input type="text" id="kodInput" placeholder="Masukkan Kod Siri">
+<button onclick="checkKod()">Semak</button>
+<div id="result"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  
 <script>
 const SHEET_ID = "2PACX-1vT-A0gknoeLsL-Sdrcqt1rYXp-LrnPDYZ6NpUcxq-1x6aA4vRXdTrNwD6NZT3wtSEo3Qtemz5fk_5w8";
 const sheetKodSiri = "KOD_SIRI";
@@ -16,42 +75,84 @@ async function checkKod() {
 
   const kodData = res1.find(row => row["KOD SIRI"] === kodInput);
 
+  // ❌ TIDAK WUJUD
   if (!kodData) {
-    return showResult("Kod tidak dijumpai.");
+    return showStyledResult("error", `
+  <h3>❌ KOD TIDAK WUJUD</h3>
+  <p>Kod siri tiada dalam rekod rasmi sistem.</p>
+`, "");
   }
 
-  if (kodData["STATUS KOD"] !== "SAH / TELAH DITEBUS") {
-    return showResult("Kod tidak sah atau belum ditebus.");
+  // 🟡 AKTIF / BELUM DITEBUS
+  if (kodData["STATUS KOD"] === "AKTIF / BELUM DITEBUS") {
+    return showStyledResult("active", `
+  <h3>STATUS KOD AKTIF</h3>
+  <p><strong>KOD SIRI:</strong> ${kodData["KOD SIRI"]}</p>
+  <p><strong>HADIAH:</strong> ${kodData["HADIAH"]}</p>
+  <p><strong>STATUS KOD:</strong> ${kodData["STATUS KOD"]}</p>
+  <p><strong>PEMBELIAN PRODUK:</strong> ${kodData["PEMBELIAN PRODUK"]}</p>
+  <p><strong>HARGA:</strong> ${kodData["HARGA"]}</p>
+  <p><strong>STATUS PENEBUSAN:</strong> BELUM DITEBUS</p>
+  <p><strong>DISAHKAN OLEH:</strong> GADIS QS HQ</p>
+`, kodInput);
   }
 
-  const penebusanData = res2.find(row => row["KOD SIRI"] === kodInput);
+  // 🟢 SAH / TELAH DITEBUS
+  if (kodData["STATUS KOD"] === "SAH / TELAH DITEBUS") {
 
-  if (!penebusanData) {
-    return showResult("Data penebusan tidak ditemui.");
+    const penebusanData = res2.find(row => row["KOD SIRI"] === kodInput);
+
+    if (!penebusanData) {
+      return showResult("Data penebusan tidak ditemui.");
+    }
+
+    return showStyledResult("success", `
+  <h3>MAKLUMAT PENEBUSAN RASMI</h3>
+  <p><strong>KOD SIRI:</strong> ${kodData["KOD SIRI"]}</p>
+  <p><strong>NAMA PENUH:</strong> ${kodData["NAMA PENUH"]}</p>
+  <p><strong>NO. IC:</strong> ${penebusanData["NO. IC"]}</p>
+  <p><strong>NO. TELEFON:</strong> ${penebusanData["NO. TELEFON"]}</p>
+  <p><strong>HADIAH:</strong> ${kodData["HADIAH"]}</p>
+  <p><strong>STATUS KOD:</strong> ${kodData["STATUS KOD"]}</p>
+  <p><strong>PEMBELIAN PRODUK:</strong> ${kodData["PEMBELIAN PRODUK"]}</p>
+  <p><strong>HARGA:</strong> ${kodData["HARGA"]}</p>
+  <p><strong>STATUS PENEBUSAN:</strong> ${penebusanData["STATUS PENEBUSAN"]}</p>
+  <p><strong>DISAHKAN OLEH:</strong> ${penebusanData["DISAHKAN OLEH"]}</p>
+  <p><strong>TARIKH:</strong> ${penebusanData["TARIKH"]}</p>
+  <p><strong>BANDAR / NEGERI:</strong> ${penebusanData["BANDAR / NEGERI"]}</p>
+`, kodInput);
   }
 
-  displayFullResult(kodData, penebusanData);
+  // Fallback
+  showResult("Status kod tidak dikenalpasti.");
 }
 
-function displayFullResult(k, p) {
+<script>
+function showStyledResult(type, content, kod) {
+
+  let boxClass = "";
+  if (type === "success") boxClass = "box-success";
+  if (type === "active") boxClass = "box-active";
+  if (type === "error") boxClass = "box-error";
+
   document.getElementById("result").innerHTML = `
-    <h3>MAKLUMAT PENEBUSAN</h3>
-    <p><strong>KOD SIRI:</strong> ${k["KOD SIRI"]}</p>
-    <p><strong>NAMA PENUH:</strong> ${k["NAMA PENUH"]}</p>
-    <p><strong>NO. IC:</strong> ${p["NO. IC"]}</p>
-    <p><strong>NO. TELEFON:</strong> ${p["NO. TELEFON"]}</p>
-    <p><strong>HADIAH:</strong> ${k["HADIAH"]}</p>
-    <p><strong>STATUS KOD:</strong> ${k["STATUS KOD"]}</p>
-    <p><strong>PEMBELIAN PRODUK:</strong> ${k["PEMBELIAN PRODUK"]}</p>
-    <p><strong>HARGA:</strong> ${k["HARGA"]}</p>
-    <p><strong>STATUS PENEBUSAN:</strong> ${p["STATUS PENEBUSAN"]}</p>
-    <p><strong>DISAHKAN OLEH:</strong> ${p["DISAHKAN OLEH"]}</p>
-    <p><strong>TARIKH:</strong> ${p["TARIKH"]}</p>
-    <p><strong>BANDAR / NEGERI:</strong> ${p["BANDAR / NEGERI"]}</p>
+    <div class="result-box ${boxClass}">
+      <div class="watermark">Sistem Rasmi Gadis QS</div>
+      ${content}
+      <div class="qr-badge" id="qrcode"></div>
+    </div>
   `;
+
+  if (type !== "error") {
+    new QRCode(document.getElementById("qrcode"), {
+      text: window.location.href + "?kod=" + kod,
+      width: 100,
+      height: 100
+    });
+  }
 }
 
-function showResult(msg) {
-  document.getElementById("result").innerHTML = `<p>${msg}</p>`;
-}
 </script>
+
+</body>
+</html>
