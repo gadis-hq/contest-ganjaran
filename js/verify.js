@@ -11,3 +11,16 @@ window.verifyCode=async function(){
  if(snap.data().redeemed===true){result.innerText="Sudah ditebus";}
  else{result.innerText="Kod sah dan layak!";}
 }
+
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const db = getFirestore();
+
+async function logAudit(kod, status) {
+  await addDoc(collection(db, "audit_logs"), {
+    kod: kod,
+    status: status,
+    timestamp: new Date(),
+    device: navigator.userAgent
+  });
+}
