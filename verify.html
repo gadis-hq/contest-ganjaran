@@ -1,21 +1,57 @@
+<script>
+const SHEET_ID = "2PACX-1vT-A0gknoeLsL-Sdrcqt1rYXp-LrnPDYZ6NpUcxq-1x6aA4vRXdTrNwD6NZT3wtSEo3Qtemz5fk_5w8";
+const sheetKodSiri = "KOD_SIRI";
+const sheetPenebusan = "DATA_PENEBUSAN";
 
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Semakan Kod</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-<div class="card">
-<h2>Semakan Kod Siri</h2>
-<input type="text" id="serialInput" placeholder="Masukkan Kod">
-<button onclick="verifyCode()">Semak</button>
-<div id="result"></div>
-</div>
-<p id="checkingStatus" class="hidden"><span class="spinner">⏳</span> <em>Sedang menyemak kod...</em></p>
-</div>
+async function checkKod() {
+  const kodInput = document.getElementById("kodInput").value.trim();
+  
+  const url1 = `https://opensheet.elk.sh/${SHEET_ID}/${sheetKodSiri}`;
+  const url2 = `https://opensheet.elk.sh/${SHEET_ID}/${sheetPenebusan}`;
 
-<script type="module" src="js/verify.js"></script>
-</body>
-</html>
+  const [res1, res2] = await Promise.all([
+    fetch(url1).then(r => r.json()),
+    fetch(url2).then(r => r.json())
+  ]);
+
+  const kodData = res1.find(row => row["KOD SIRI"] === kodInput);
+
+  if (!kodData) {
+    return showResult("Kod tidak dijumpai.");
+  }
+
+  if (kodData["STATUS KOD"] !== "SAH / TELAH DITEBUS") {
+    return showResult("Kod tidak sah atau belum ditebus.");
+  }
+
+  const penebusanData = res2.find(row => row["KOD SIRI"] === kodInput);
+
+  if (!penebusanData) {
+    return showResult("Data penebusan tidak ditemui.");
+  }
+
+  displayFullResult(kodData, penebusanData);
+}
+
+function displayFullResult(k, p) {
+  document.getElementById("result").innerHTML = `
+    <h3>MAKLUMAT PENEBUSAN</h3>
+    <p><strong>KOD SIRI:</strong> ${k["KOD SIRI"]}</p>
+    <p><strong>NAMA PENUH:</strong> ${k["NAMA PENUH"]}</p>
+    <p><strong>NO. IC:</strong> ${p["NO. IC"]}</p>
+    <p><strong>NO. TELEFON:</strong> ${p["NO. TELEFON"]}</p>
+    <p><strong>HADIAH:</strong> ${k["HADIAH"]}</p>
+    <p><strong>STATUS KOD:</strong> ${k["STATUS KOD"]}</p>
+    <p><strong>PEMBELIAN PRODUK:</strong> ${k["PEMBELIAN PRODUK"]}</p>
+    <p><strong>HARGA:</strong> ${k["HARGA"]}</p>
+    <p><strong>STATUS PENEBUSAN:</strong> ${p["STATUS PENEBUSAN"]}</p>
+    <p><strong>DISAHKAN OLEH:</strong> ${p["DISAHKAN OLEH"]}</p>
+    <p><strong>TARIKH:</strong> ${p["TARIKH"]}</p>
+    <p><strong>BANDAR / NEGERI:</strong> ${p["BANDAR / NEGERI"]}</p>
+  `;
+}
+
+function showResult(msg) {
+  document.getElementById("result").innerHTML = `<p>${msg}</p>`;
+}
+</script>
