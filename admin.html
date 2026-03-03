@@ -27,5 +27,76 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 
 <script type="module" src="js/admin.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDAGrKodo7O4GlfUCz4v09SinVd_Y6HECM", 
+  authDomain: "gadisqs-hq.firebaseapp.com",
+  projectId: "gadisqs-hq",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Guna JSON-proxy fetch supaya redirect teratasi
+const PROXY_URL = "https://api.allorigins.win/raw?url=";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT-A0gknoeLsL-Sdrcqt1rYXp-LrnPDYZ6NpUcxq-1x6aA4vRXdTrNwD6NZT3wtSEo3Qtemz5fk_5w8/pub?output=csv";
+
+async function importFromSheet(){
+  try {
+    const response = await fetch(PROXY_URL + encodeURIComponent(CSV_URL));
+    const text = await response.text();
+
+    const lines = text.split("\n");
+    const headers = lines[0].split(",");
+
+    let total = lines.length - 1;
+    let success = 0;
+    let dup = 0;
+
+    for(let i=1; i<lines.length; i++){
+      const row = lines[i].split(",");
+      const rowObj = {};
+      headers.forEach((h, idx) => {
+        rowObj[h.trim()] = row[idx]?.trim();
+      });
+
+      const kod = rowObj["KOD SIRI"];
+      if(!kod) continue;
+
+      const ref = doc(db, "codes", kod);
+      const snap = await getDoc(ref);
+
+      if(snap.exists()){
+        dup++;
+      } else {
+        await setDoc(ref, rowObj);
+        success++;
+      }
+    }
+
+    alert(`Import selesai: ${success} added, ${dup} duplicate`);
+  } catch(err) {
+    console.error("Import fail:", err);
+    alert("Import gagal. Sila pastikan link benar dan cuba lagi.");
+  }
+}
+
+window.importFromSheet = importFromSheet;
+</script>
+
+<button onclick="importFromSheet()">
+📥 Import Dari Google Sheet
+</button>
+  
 </body>
 </html>
