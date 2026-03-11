@@ -58,10 +58,34 @@ font-weight:bold;
 color:#d4af37;
 }
 
+.ticker{
+width:100%;
+overflow:hidden;
+background:#d4af37;
+color:white;
+padding:8px 0;
+font-weight:bold;
+}
+
+#tickerText{
+white-space:nowrap;
+display:inline-block;
+padding-left:100%;
+animation:tickerMove 35s linear infinite;
+}
+
+@keyframes tickerMove{
+0%{transform:translateX(0)}
+100%{transform:translateX(-100%)}
+}
+  
 </style>
 
 </head>
 
+<div class="ticker">
+<div id="tickerText"></div>
+</div>  
 <body>
 
 <h1>GANJARAN GADIS QS</h1>
