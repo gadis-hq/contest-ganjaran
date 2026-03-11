@@ -117,3 +117,22 @@ data.semakan
 setInterval(loadRealtime,3000);
 
 loadRealtime();
+
+
+function loadCounter(){
+
+fetch(CONFIG.API_URL + "?counter=1")
+
+.then(res => res.json())
+
+.then(data => {
+
+document.getElementById("liveCounter").innerText = data.total;
+
+});
+
+}
+
+setInterval(loadCounter,3000);
+
+loadCounter();
