@@ -10,19 +10,35 @@ fetch(CONFIG.API_URL + "?map=heat")
 
 .then(data=>{
 
+let heatPoints=[];
+
 data.forEach(p=>{
 
-L.circle([p.lat,p.lng],{
+if(!p.lat || !p.lng) return;
 
-radius:20000,
-color:"#ff3385"
+heatPoints.push([
+parseFloat(p.lat),
+parseFloat(p.lng),
+0.5
+]);
 
-})
+// pin lokasi pemenang
+L.marker([p.lat,p.lng])
 .addTo(map)
 .bindPopup(
-`🎉 ${p.hadiah}<br>${p.negeri}`
+`🎉 ${p.nama}<br>${p.hadiah}<br>${p.negeri}`
 );
 
 });
+
+// heatmap layer
+L.heatLayer(
+heatPoints,
+{
+radius:25,
+blur:20,
+maxZoom:10
+}
+).addTo(map);
 
 });
