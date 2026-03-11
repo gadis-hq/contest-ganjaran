@@ -95,3 +95,25 @@ data.total
 setInterval(loadLiveCounter,4000);
 
 loadLiveCounter();
+
+
+function loadRealtime(){
+
+fetch(CONFIG.API_URL + "?analytics=1")
+
+.then(r=>r.json())
+
+.then(data=>{
+
+animateNumber(
+document.getElementById("liveCounter"),
+data.semakan
+);
+
+});
+
+}
+
+setInterval(loadRealtime,3000);
+
+loadRealtime();
