@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GADIS QS HQ - Semak Kod Siri</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#fff0f5;
+    margin:0;
+    text-align:center;
+}
+.container{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
+}
+input{
+    width:80%;
+    padding:15px;
+    font-size:16px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    text-align:center;
+}
+button{
+    padding:12px 25px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(45deg,#ff0080,#ff4da6);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+.laser{
+    position:absolute;
+    height:3px;
+    width:100%;
+    background:red;
+    animation:scan 2s infinite;
+    display:none;
+}
+@keyframes scan{
+0%{top:0}
+50%{top:100%}
+100%{top:0}
+}
+.loading{
+    font-style:italic;
+    color:#999;
+    filter:blur(1px);
+    animation:pulse 1s infinite;
+}
+@keyframes pulse{
+0%{opacity:0.5}
+50%{opacity:1}
+100%{opacity:0.5}
+}
+.resultCard{
+    background:white;
+    text-align:left;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    margin-top:20px;
+}
+#sijil{
+    display:none;
+    margin-top:20px;
+    width:100%;
+}
+#qr-reader{
+    width:100%;
+    height:300px;
+    display:none;
+    margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>🔎 Semak Kod Siri</h2>
+
+<div style="position:relative;">
+<input id="kodInput" placeholder="Masukkan Kod Siri">
+<div class="laser" id="laser"></div>
+</div>
+
+<br>
+<button onclick="semakKod()">Semak Kod</button>
+<p id="loadingText"></p>
+<div id="result"></div>
+<img id="sijil">
+<div id="qr-reader"></div>
+
+</div>
+
+<!-- SCRIPT -->
+<script src="js/config.js"></script>
+<script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script src="js/semakkod.js"></script>
+
+</body>
+</html>
