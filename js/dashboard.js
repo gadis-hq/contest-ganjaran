@@ -48,3 +48,28 @@ data.total_belum
 setInterval(loadDashboard,5000);
 
 loadDashboard();
+
+
+function loadTicker(){
+
+fetch(CONFIG.API_URL + "?ticker=1")
+
+.then(r=>r.json())
+
+.then(data=>{
+
+let text="";
+
+data.forEach(p=>{
+
+text += `🎉 ${p.nama} menang ${p.hadiah} dari ${p.negeri} • `;
+
+});
+
+document.getElementById("tickerText").innerText=text;
+
+});
+
+}
+
+loadTicker();
