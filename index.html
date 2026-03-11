@@ -1,23 +1,99 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <title>Gadis QS Ganjaran</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <div class="center">
-    <h1>GADIS QS HQ SEMAKAN GANJARAN</h1>
-    <a href="verify.html">Semakan Kod</a><br><br>
-    <a href="admin.html">Admin Login</a>
-  </div>
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>GADIS QS GANJARAN</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+
+body{
+font-family:Arial;
+background:#fff0f5;
+text-align:center;
 }
-</script>
+
+h1{
+color:#d4af37;
+}
+
+#reader{
+width:300px;
+margin:auto;
+}
+
+#map{
+height:450px;
+margin-top:30px;
+}
+
+.stat{
+display:flex;
+justify-content:center;
+gap:20px;
+margin:30px;
+}
+
+.box{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.box span{
+font-size:28px;
+font-weight:bold;
+color:#d4af37;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>GANJARAN GADIS QS</h1>
+
+<h3>Scan Kod Siri</h3>
+
+<div id="reader"></div>
+
+<div class="stat">
+
+<div class="box">
+Total Kod Siri<br>
+<span id="totalKod">0</span>
+</div>
+
+<div class="box">
+Total Ditebus<br>
+<span id="totalTebus">0</span>
+</div>
+
+<div class="box">
+Belum Tebus<br>
+<span id="totalBelum">0</span>
+</div>
+
+</div>
+
+<h3>Peta Pemenang Malaysia</h3>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/qrscan.js"></script>
+<script src="js/map.js"></script>
+<script src="js/dashboard.js"></script>
+
 </body>
 </html>
