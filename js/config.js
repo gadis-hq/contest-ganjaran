@@ -1,6 +1,6 @@
 const CONFIG = {
 
 API_URL:
-"https://script.google.com/macros/s/AKfycbxAh5FU9Yq89oFD3Yg5VAGtVENdqAJKLRCrls4XJGz-XFFntRdFtU5INgA6Yi1pmPOr/exec"
+"https://script.google.com/macros/s/AKfycbxrj7bxTtpqjuEEWsTvzyN6nOfqucjwAYYpcKmfgwucU93LRxqt7Dg1X0GIr9eD0L4b/exec"
 
 };
