@@ -92,6 +92,42 @@ animation:blinkMarker 1s infinite;
 100%{opacity:1}
 
 }
+
+.tickerWrap{
+
+width:100%;
+background:#111;
+color:white;
+display:flex;
+overflow:hidden;
+font-size:14px;
+
+}
+
+.tickerTitle{
+
+background:#d4af37;
+color:black;
+padding:8px 15px;
+font-weight:bold;
+
+}
+
+.tickerMove{
+
+white-space:nowrap;
+padding-left:20px;
+animation:tickerMove 25s linear infinite;
+
+}
+
+@keyframes tickerMove{
+
+0%{transform:translateX(100%)}
+
+100%{transform:translateX(-100%)}
+
+}
   
 </style>
 
@@ -101,7 +137,21 @@ animation:blinkMarker 1s infinite;
 <div id="tickerText"></div>
 </div>  
 <body>
+<div class="tickerWrap">
 
+<div class="tickerTitle">
+PEMENANG TERKINI
+</div>
+
+<div class="tickerMove">
+
+<span id="tickerText"></span>
+
+</div>
+
+</div>
+
+<script src="js/ticker.js"></script>
 <h1>GANJARAN GADIS QS</h1>
 
 <h3>Scan Kod Siri</h3>
