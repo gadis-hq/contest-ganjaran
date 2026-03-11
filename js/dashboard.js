@@ -73,3 +73,25 @@ document.getElementById("tickerText").innerText=text;
 }
 
 loadTicker();
+
+
+function loadLiveCounter(){
+
+fetch(CONFIG.API_URL + "?counter=1")
+
+.then(r=>r.json())
+
+.then(data=>{
+
+animateNumber(
+document.getElementById("totalSemakan"),
+data.total
+);
+
+});
+
+}
+
+setInterval(loadLiveCounter,4000);
+
+loadLiveCounter();
