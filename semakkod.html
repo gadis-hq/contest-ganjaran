@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GADIS QS HQ - Semak Kod Siri</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d4af37">    
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <style>
 body{
@@ -96,7 +98,12 @@ button{
 <div id="result"></div>
 <img id="sijil">
 <div id="qr-reader"></div>
+    
+<!-- QR Scanner -->
+<div id="qr-reader" style="width:100%;display:none;"></div>
+<button onclick="startScanner()">📷 Imbas QR</button>
 
+</div>
 </div>
 
 <!-- SCRIPT -->
@@ -104,6 +111,7 @@ button{
 <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <script src="js/semakkod.js"></script>
-
+<script src="js/qrscan.js"></script>
+    
 </body>
 </html>
